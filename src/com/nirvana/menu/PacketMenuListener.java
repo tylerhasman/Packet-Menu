@@ -7,12 +7,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import com.comphenix.packetwrapper.WrapperPlayClientWindowClick;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 
 public class PacketMenuListener extends PacketAdapter implements Listener 
@@ -54,9 +55,15 @@ public class PacketMenuListener extends PacketAdapter implements Listener
 			});
 			
 		}else if(type == PacketType.Play.Client.WINDOW_CLICK){
-			WrapperPlayClientWindowClick clickPacket = new WrapperPlayClientWindowClick(event.getPacket());
+			PacketContainer packet = event.getPacket();
+
+			int windowId = packet.getIntegers().read(0);
+			int slot = packet.getIntegers().read(1);
+			int button = packet.getIntegers().read(3);
 			
-			int slot = clickPacket.getSlot();
+			int actionNumber = packet.getShorts().read(0);
+			
+			ItemStack clickedItem = packet.getItemModifier().read(0);
 			
 			if(slot < 0)
 				return;
@@ -65,7 +72,7 @@ public class PacketMenuListener extends PacketAdapter implements Listener
 			
 			if(menu != null){
 				
-				if(menu.geWindowId() != clickPacket.getWindowId()){
+				if(menu.getWindowId() != windowId){
 					return;
 				}
 				
@@ -75,17 +82,17 @@ public class PacketMenuListener extends PacketAdapter implements Listener
 				
 				PacketMenuUtilities.sendSetSlotGuaranteedSync(-1, -1, null, player);
 				
-				ClickType clickType = getClickType(clickPacket.getActionNumber(), clickPacket.getButton());
+				ClickType clickType = getClickType(actionNumber, button);
 				
-				PacketMenuUtilities.sendSetSlotGuaranteedSync(clickPacket.getSlot(), clickPacket.getWindowId(), menu.getItem(clickPacket.getSlot()), player);
+				PacketMenuUtilities.sendSetSlotGuaranteedSync(slot, windowId, menu.getItem(slot), player);
 				
 				if(clickType == ClickType.NUMBER_KEY || clickType == ClickType.SHIFT_LEFT || clickType == ClickType.SHIFT_RIGHT)
 				{
 					Bukkit.getScheduler().runTask(PacketMenuPlugin.getInstance(), () -> player.updateInventory());
 				}
 				
-				if(clickPacket.getClickedItem() != null){
-					menu.onClick(slot, clickType, player, clickPacket.getClickedItem());
+				if(clickedItem != null){
+					menu.onClick(slot, clickType, player, clickedItem);
 				}
 				
 				event.setReadOnly(false);

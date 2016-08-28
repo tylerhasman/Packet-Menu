@@ -91,7 +91,7 @@ public interface PacketMenu
 	 * Get the window id that all minecraft clients require when dealing with inventory menus
 	 * @return the window id
 	 */
-	public int geWindowId();
+	public int getWindowId();
 	
 	/**
 	 * Create a task that will automatically update the menu until it closes

@@ -1,12 +1,15 @@
 package com.nirvana.menu;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
-import com.comphenix.packetwrapper.WrapperPlayServerOpenWindow;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 public class AnvilPacketMenu implements PacketMenu
@@ -82,14 +85,14 @@ public class AnvilPacketMenu implements PacketMenu
 	@Override
 	public void open(Player pl)
 	{
-		WrapperPlayServerOpenWindow windowPacket = new WrapperPlayServerOpenWindow();
 		
-		windowPacket.setWindowID(id);
-		windowPacket.setInventoryType(PacketMenuUtilities.ANVIL_TYPE);
-		windowPacket.setNumberOfSlots(0);
-		windowPacket.setWindowTitle(WrappedChatComponent.fromText(ChatColor.DARK_GREEN+defaultText));
+		PacketContainer packet = PacketUtil.openWindowPacket(id, PacketMenuUtilities.ANVIL_TYPE, ChatColor.DARK_GREEN+defaultText, 0);
 		
-		windowPacket.sendPacket(pl);
+		try {
+			ProtocolLibrary.getProtocolManager().sendServerPacket(pl, packet);
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
 		
 		sendItemsPacket(pl);
 		
@@ -142,7 +145,7 @@ public class AnvilPacketMenu implements PacketMenu
 	}
 
 	@Override
-	public int geWindowId()
+	public int getWindowId()
 	{
 		return id;
 	}

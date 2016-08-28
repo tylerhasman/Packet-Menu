@@ -1,5 +1,6 @@
 package com.nirvana.menu;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 import org.apache.commons.lang.Validate;
@@ -9,7 +10,8 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
-import com.comphenix.packetwrapper.WrapperPlayServerCloseWindow;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 public class ChestPacketMenu implements PacketMenu
@@ -169,9 +171,14 @@ public class ChestPacketMenu implements PacketMenu
 	public void close(Player pl)
 	{
 		if(!closed){
-			WrapperPlayServerCloseWindow cw = new WrapperPlayServerCloseWindow();
-			cw.setWindowId(id);
-			cw.sendPacket(pl);
+			PacketContainer packet = PacketUtil.closeWindow( this.getWindowId());
+			
+			try {
+				ProtocolLibrary.getProtocolManager().sendServerPacket(pl, packet);
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+			
 			PacketMenuPlugin.getPacketMenuManager().unsetPacketMenu(pl);
 			cancelUpdateTask();
 			closed = true;
@@ -217,7 +224,7 @@ public class ChestPacketMenu implements PacketMenu
 	}
 
 	@Override
-	public int geWindowId()
+	public int getWindowId()
 	{
 		return id;
 	}

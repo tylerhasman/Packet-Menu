@@ -1,13 +1,15 @@
 package com.nirvana.menu;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
-import com.comphenix.packetwrapper.WrapperPlayServerOpenWindow;
-import com.comphenix.packetwrapper.WrapperPlayServerSetSlot;
-import com.comphenix.packetwrapper.WrapperPlayServerWindowItems;
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 class PacketMenuUtilities
@@ -18,39 +20,53 @@ class PacketMenuUtilities
 	
 	public static void sendSetSlotGuaranteedSync(int slot, int windowId, ItemStack item, Player player){
 		
-		WrapperPlayServerSetSlot packet = new WrapperPlayServerSetSlot();
+		PacketContainer packet = new PacketContainer(PacketType.Play.Server.SET_SLOT);
 		
-		packet.setSlot(slot);
-		packet.setWindowId(windowId);
-		packet.setSlotData(item);
+		packet.getIntegers().write(0, windowId);
+		packet.getIntegers().write(1, slot);
+		packet.getItemModifier().write(0, item);
 		
 		Bukkit.getScheduler().runTask(PacketMenuPlugin.getInstance(), () -> {
-			packet.sendPacket(player);
+			try {
+				ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 		
 	}
 	
 	public static void sendWindowItemPacketGuaranteedSync(int windowId, ItemStack[] items, Player player){
-		WrapperPlayServerWindowItems packet = new WrapperPlayServerWindowItems();
+		PacketContainer packet = new PacketContainer(PacketType.Play.Server.WINDOW_ITEMS);
 		
-		packet.setWindowId(windowId);
-		packet.setSlotData(items);
+		packet.getIntegers().write(0, windowId);
+		packet.getItemArrayModifier().write(0, items);
 		
 		Bukkit.getScheduler().runTaskLater(PacketMenuPlugin.getInstance(), () -> {
-			packet.sendPacket(player);
+			try {
+				ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}, 2);
 	}
 	
 	public static void sendWindowOpenPacketGuaranteedSync(int windowId, int slots, String type, WrappedChatComponent title, Player player){
-		WrapperPlayServerOpenWindow packet = new WrapperPlayServerOpenWindow();
+		/*WrapperPlayServerOpenWindow packet = new WrapperPlayServerOpenWindow();
 		
 		packet.setInventoryType(type);
 		packet.setNumberOfSlots(slots);
 		packet.setWindowID(windowId);
-		packet.setWindowTitle(title);
+		packet.setWindowTitle(title);*/
+		
+		PacketContainer packet = PacketUtil.openWindowPacket(windowId, type, title, slots);
 		
 		Bukkit.getScheduler().runTask(PacketMenuPlugin.getInstance(), () -> {
-			packet.sendPacket(player);
+			try {
+				ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		});
 	}
 	
