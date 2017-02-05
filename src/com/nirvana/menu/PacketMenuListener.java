@@ -59,7 +59,7 @@ public class PacketMenuListener extends PacketAdapter implements Listener
 
 			int windowId = packet.getIntegers().read(0);
 			int slot = packet.getIntegers().read(1);
-			int button = packet.getIntegers().read(3);
+			int button = packet.getIntegers().read(2);
 			
 			int actionNumber = packet.getShorts().read(0);
 			

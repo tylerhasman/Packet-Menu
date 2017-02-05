@@ -1,9 +1,10 @@
 package com.nirvana.menu;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -40,8 +41,18 @@ class PacketMenuUtilities
 	public static void sendWindowItemPacketGuaranteedSync(int windowId, ItemStack[] items, Player player){
 		PacketContainer packet = new PacketContainer(PacketType.Play.Server.WINDOW_ITEMS);
 		
+		List<ItemStack> list = new ArrayList<>();
+		
+		for(ItemStack item : items){
+			if(item == null){
+				list.add(new ItemStack(Material.AIR, 1));
+			}else{
+				list.add(item);
+			}
+		}
+		
 		packet.getIntegers().write(0, windowId);
-		packet.getItemListModifier().write(0, Arrays.asList(items));
+		packet.getItemListModifier().write(0, list);
 		
 		Bukkit.getScheduler().runTaskLater(PacketMenuPlugin.getInstance(), () -> {
 			try {
@@ -49,17 +60,10 @@ class PacketMenuUtilities
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}, 2);
+		}, 0);
 	}
 	
 	public static void sendWindowOpenPacketGuaranteedSync(int windowId, int slots, String type, WrappedChatComponent title, Player player){
-		/*WrapperPlayServerOpenWindow packet = new WrapperPlayServerOpenWindow();
-		
-		packet.setInventoryType(type);
-		packet.setNumberOfSlots(slots);
-		packet.setWindowID(windowId);
-		packet.setWindowTitle(title);*/
-		
 		PacketContainer packet = PacketUtil.openWindowPacket(windowId, type, title, slots);
 		
 		Bukkit.getScheduler().runTask(PacketMenuPlugin.getInstance(), () -> {
