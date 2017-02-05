@@ -1,6 +1,7 @@
 package com.nirvana.menu;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -40,7 +41,7 @@ class PacketMenuUtilities
 		PacketContainer packet = new PacketContainer(PacketType.Play.Server.WINDOW_ITEMS);
 		
 		packet.getIntegers().write(0, windowId);
-		packet.getItemArrayModifier().write(0, items);
+		packet.getItemListModifier().write(0, Arrays.asList(items));
 		
 		Bukkit.getScheduler().runTaskLater(PacketMenuPlugin.getInstance(), () -> {
 			try {
