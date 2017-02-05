@@ -12,7 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 
-class Item implements Cloneable
+public class Item implements Cloneable
 {
 	
 	private Material type;
