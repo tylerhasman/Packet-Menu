@@ -1,7 +1,10 @@
 package com.nirvana.menu;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -37,6 +40,8 @@ public class ChestPacketMenu implements PacketMenu
 	private long lastClick;
 	private int minimumClickDelay;
 	
+	private List<UUID> viewers;
+	
 	/**
 	 * 
 	 * @param size the menu's size must be a multiple of 9
@@ -61,6 +66,7 @@ public class ChestPacketMenu implements PacketMenu
 		closed = true;
 		lastClick = 0;
 		minimumClickDelay = 0;
+		viewers = new ArrayList<>();
 	}
 	
 	public void setMinimumClickDelay(int minimumClickDelay) {
@@ -121,21 +127,22 @@ public class ChestPacketMenu implements PacketMenu
 		
 		items[slot] = item;
 		
-		Bukkit.getOnlinePlayers().stream().forEach(pl -> {
-			if(PacketMenuPlugin.getPacketMenuManager().isOpenMenuOfType(pl, ChestPacketMenu.class)){
-				ChestPacketMenu menu = PacketMenuPlugin.getPacketMenuManager().getOpenMenu(pl);
-				
-				if(menu == null){
-					return;
-				}
-				
-				if(menu.uniqueId == uniqueId){
-					PacketMenuUtilities.sendSetSlotGuaranteedSync(slot, id, items[slot], pl);
+		for(UUID viewer : viewers){
+			Player pl = Bukkit.getPlayer(viewer);
+			if(pl != null){
+				if(PacketMenuPlugin.getPacketMenuManager().isOpenMenuOfType(pl, ChestPacketMenu.class)){
+					ChestPacketMenu menu = PacketMenuPlugin.getPacketMenuManager().getOpenMenu(pl);
+					
+					if(menu == null){
+						return;
+					}
+					
+					if(menu.uniqueId == uniqueId){
+						PacketMenuUtilities.sendSetSlotGuaranteedSync(slot, id, items[slot], pl);
+					}
 				}
 			}
-
-			
-		});
+		}
 	}
 	
 	@Override
@@ -164,6 +171,8 @@ public class ChestPacketMenu implements PacketMenu
 		PacketMenuPlugin.getPacketMenuManager().setPacketMenu(pl, this);
 		
 		closed = false;
+		
+		viewers.add(pl.getUniqueId());
 		
 	}
 
