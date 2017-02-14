@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -47,7 +48,7 @@ public class ChestPacketMenu implements PacketMenu
 	 * @param size the menu's size must be a multiple of 9
 	 * and greater than 0
 	 */
-	public ChestPacketMenu(int size, String title, Player player)
+	public ChestPacketMenu(int size, String title)
 	{
 		
 		if(size == 0 || size % 9 != 0){
@@ -57,7 +58,7 @@ public class ChestPacketMenu implements PacketMenu
 		this.size = size;
 		this.title = title;
 		
-		id = ((int)NMSManager.invokeMethodForEntityHandle(player, "nextContainerCounter")) + 5;
+		id = 127;
 		uniqueId = nextId++;
 		
 		items = new ItemStack[size];
@@ -67,6 +68,11 @@ public class ChestPacketMenu implements PacketMenu
 		lastClick = 0;
 		minimumClickDelay = 0;
 		viewers = new ArrayList<>();
+	}
+	
+	@Deprecated
+	public ChestPacketMenu(int size, String title, Player player){
+		this(size, title);
 	}
 	
 	public void setMinimumClickDelay(int minimumClickDelay) {
@@ -179,20 +185,27 @@ public class ChestPacketMenu implements PacketMenu
 	@Override
 	public void close(Player pl)
 	{
+		close();
+	}
+	
+	@Override
+	public void close(){
 		if(!closed){
-			PacketContainer packet = PacketUtil.closeWindow( this.getWindowId());
-			
-			try {
-				ProtocolLibrary.getProtocolManager().sendServerPacket(pl, packet);
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+			for(UUID viewer : viewers){
+				Player pl = Bukkit.getPlayer(viewer);
+				PacketContainer packet = PacketUtil.closeWindow(this.getWindowId());
+				
+				try {
+					ProtocolLibrary.getProtocolManager().sendServerPacket(pl, packet);
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+				
+				PacketMenuPlugin.getPacketMenuManager().unsetPacketMenu(pl);
+				cancelUpdateTask();
+				closed = true;
 			}
-			
-			PacketMenuPlugin.getPacketMenuManager().unsetPacketMenu(pl);
-			cancelUpdateTask();
-			closed = true;
 		}
-
 	}
 
 	@Override
@@ -218,6 +231,12 @@ public class ChestPacketMenu implements PacketMenu
 		PacketMenuUtilities.sendSetSlotGuaranteedSync(slot, id, items[slot], player);
 		
 		
+	}
+	
+	public void clearInventory(){
+		for(int i = 0; i < items.length;i++){
+			addItem(i, new ItemStack(Material.AIR));
+		}
 	}
 
 	@Override

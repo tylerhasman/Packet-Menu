@@ -47,7 +47,7 @@ public class IPacketMenuManager implements PacketMenuManager
 		T menu = (T) openMenus.remove(player.getUniqueId());
 		
 		if(menu != null){
-			menu.close(player);
+			menu.close();
 		}
 		
 		return menu;

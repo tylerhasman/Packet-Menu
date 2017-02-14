@@ -66,10 +66,18 @@ public interface PacketMenu
 	public void open(Player pl);
 	
 	/**
+	 * 
 	 * Close the packet menu for a player
 	 * @param pl the player
+	 * @deprecated Use {@link #close()}
 	 */
+	@Deprecated
 	public void close(Player pl);
+	
+	/**
+	 * Close this packet menu (for all players looking at it)
+	 */
+	public void close();
 	
 	/**
 	 * Called internally, don't call

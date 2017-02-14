@@ -1,7 +1,11 @@
 package com.nirvana.menu;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -9,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.PacketType.Play;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
@@ -23,9 +28,17 @@ public class AnvilPacketMenu implements PacketMenu
 	
 	private AnvilPacketMenuHandler handler;
 	
-	public AnvilPacketMenu(Player player)
+	private List<UUID> viewers;
+	
+	@Deprecated
+	public AnvilPacketMenu(Player player){
+		this();
+	}
+	
+	public AnvilPacketMenu()
 	{
-		id = NMSManager.invokeMethodForEntityHandle(player, "nextContainerCounter");
+		id = 127;
+		viewers = new ArrayList<>();
 	}
 	
 	public void setResult(ItemStack result){
@@ -97,13 +110,22 @@ public class AnvilPacketMenu implements PacketMenu
 		sendItemsPacket(pl);
 		
 		PacketMenuPlugin.getPacketMenuManager().setPacketMenu(pl, this);
+		viewers.add(pl.getUniqueId());
 	}
 	
 	@Override
 	public void close(Player pl)
 	{
-		pl.closeInventory();
-		PacketMenuPlugin.getPacketMenuManager().unsetPacketMenu(pl);
+		close();
+	}
+	
+	@Override
+	public void close() {
+		for(UUID viewer : viewers){
+			Player pl = Bukkit.getPlayer(viewer);
+			pl.closeInventory();
+			PacketMenuPlugin.getPacketMenuManager().unsetPacketMenu(pl);
+		}
 	}
 	
 	public void onClick(int slot, ClickType type, Player pl, ItemStack item){
