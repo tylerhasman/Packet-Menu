@@ -110,6 +110,7 @@ public class ChestPacketMenu implements PacketMenu
 		if(nextOpenSlot() == -1){
 			size += 9;
 			items = Arrays.copyOf(items, size);
+			handlers = Arrays.copyOf(handlers, size);
 		}
 		
 		addItem(nextOpenSlot(), item, handler);
