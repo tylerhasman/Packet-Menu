@@ -97,6 +97,17 @@ public class ChestPacketMenu implements PacketMenu
 		this.addIndex = addIndex;
 	}
 	
+	public void setTitle(String title) {
+		this.title = title;
+		for(UUID viewer : viewers){
+			Player pl = Bukkit.getPlayer(viewer);
+			
+			if(pl != null){
+				PacketMenuUtilities.sendWindowOpenPacketGuaranteedSync(id, items.length, PacketMenuUtilities.CHEST_TYPE, WrappedChatComponent.fromText(title), pl);
+			}
+		}
+	}
+	
 	@Override
 	public int getSize()
 	{
@@ -140,6 +151,10 @@ public class ChestPacketMenu implements PacketMenu
 	public void addItem(int slot, ItemStack item)
 	{
 		
+		if(items.length <= slot){
+			throw new IllegalArgumentException("slot must be less than "+items.length+" Slot = "+slot);
+		}
+		
 		items[slot] = item;
 		
 		for(UUID viewer : viewers){
@@ -168,8 +183,7 @@ public class ChestPacketMenu implements PacketMenu
 	}
 	
 	//Translate x,y coordinates to a minecraft inventory coordinate
-	public int translateCoord(int x, int y){
-		
+	public static int translateCoord(int x, int y){
 		 return ((y - 1) * 9) + (x - 1);
 	}
 	
@@ -248,8 +262,17 @@ public class ChestPacketMenu implements PacketMenu
 	}
 	
 	public void clearInventory(){
-		for(int i = 0; i < items.length;i++){
-			addItem(i, new ItemStack(Material.AIR));
+		items = new ItemStack[items.length];
+		handlers = new PacketMenuSlotHandler[items.length];
+	}
+	
+	protected void updateItemsForViewers(){
+		for(UUID viewer : viewers){
+			Player pl = Bukkit.getPlayer(viewer);
+			
+			if(pl != null){
+				PacketMenuUtilities.sendWindowItemPacketGuaranteedSync(id, items, pl);
+			}
 		}
 	}
 
