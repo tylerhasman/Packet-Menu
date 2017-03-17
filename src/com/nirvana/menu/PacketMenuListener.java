@@ -65,8 +65,6 @@ public class PacketMenuListener extends PacketAdapter implements Listener
 			
 			ItemStack clickedItem = packet.getItemModifier().read(0);
 			
-			System.out.println(windowId+" "+slot+" "+button);
-			
 			if(slot < 0)
 				return;
 			
