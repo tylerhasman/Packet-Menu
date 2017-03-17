@@ -32,20 +32,38 @@ public class PagedMenu extends ChestPacketMenu {
 	}
 	
 	public PagedMenu(List<PageMenuEntry> entries, int page, String name) {
-		super(54, name+" Page "+(page + 1));
+		super(54, getMenuName(name, page));
 		this.page = page;
 		this.entries = entries;
 		this.menuTitle = name;
 		initialize();
 	}
 	
+	private static String getMenuName(String name, int page){
+		return name+" Page "+(page + 1);
+	}
+	
+	public void remake(){
+		remake(false);
+	}
+	
+	public void remake(boolean refreshTitle){
+		if(refreshTitle){
+			setTitle(getMenuName(menuTitle, page));
+		}
+		
+		clearInventory();
+		initialize();
+		updateItemsForViewers();
+	}
+	
 	private void initialize(){
 		
 		List<PageMenuEntry> entries = new ArrayList<>(this.entries);
+
+		Collections.sort(entries);
 		
 		trimToPage(entries);
-		
-		Collections.sort(entries);
 		
 		for(int y = 0; y < 3 && entries.size() > 0;y++){
 			for(int x = 0; x < 7 && entries.size() > 0;x++){
@@ -62,8 +80,9 @@ public class PagedMenu extends ChestPacketMenu {
 				
 				@Override
 				public void onClicked(Player player, PacketMenu menu, Interaction interactionInfo) {
-					menu.close();
-					new PagedMenu(PagedMenu.this.entries, page - 1, PagedMenu.this.menuTitle);
+					page--;
+					remake(true);
+					//new PagedMenu(PagedMenu.this.entries, page - 1, PagedMenu.this.menuTitle).open(player);
 				}
 			});
 		}
@@ -73,8 +92,10 @@ public class PagedMenu extends ChestPacketMenu {
 				
 				@Override
 				public void onClicked(Player player, PacketMenu menu, Interaction interactionInfo) {
-					menu.close();
-					new PagedMenu(PagedMenu.this.entries, page - 1, PagedMenu.this.menuTitle);
+					page++;
+					remake(true);
+					//menu.close();
+					//new PagedMenu(PagedMenu.this.entries, page + 1, PagedMenu.this.menuTitle).open(player);;
 				}
 			});
 		}
@@ -85,7 +106,8 @@ public class PagedMenu extends ChestPacketMenu {
 		
 		int start = page * 21;
 		while(start > 0){
-			info.remove(start--);
+			info.remove(0);
+			start--;
 		}
 		
 	}
