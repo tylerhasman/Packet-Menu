@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -43,6 +44,8 @@ public class ChestPacketMenu implements PacketMenu
 	
 	private List<UUID> viewers;
 	
+	private Sound clickSound;
+	
 	/**
 	 * 
 	 * @param size the menu's size must be a multiple of 9
@@ -68,6 +71,11 @@ public class ChestPacketMenu implements PacketMenu
 		lastClick = 0;
 		minimumClickDelay = 0;
 		viewers = new ArrayList<>();
+	}
+	
+	@Override
+	public void setClickSound(Sound clickSound) {
+		this.clickSound = clickSound;
 	}
 	
 	@Deprecated
@@ -231,6 +239,11 @@ public class ChestPacketMenu implements PacketMenu
 		
 		PacketMenuUtilities.sendSetSlotGuaranteedSync(slot, id, items[slot], player);
 		
+		if(clickSound != null){
+			if(clicked != null)
+				player.playSound(player.getLocation(), clickSound, 1F, 1F);
+		}
+			
 		
 	}
 	

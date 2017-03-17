@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -29,6 +30,8 @@ public class AnvilPacketMenu implements PacketMenu
 	private AnvilPacketMenuHandler handler;
 	
 	private List<UUID> viewers;
+	
+	private Sound clickSound;
 	
 	@Deprecated
 	public AnvilPacketMenu(Player player){
@@ -147,6 +150,9 @@ public class AnvilPacketMenu implements PacketMenu
 			
 			PacketMenuUtilities.notifyPacketAnvilHandleSyncronously(handler, text, pl);
 		}
+		
+		if(clickSound != null)
+			pl.playSound(pl.getLocation(), clickSound, 1F, 1F);
 	}
 	
 	public void sendItemsPacket(Player pl){
@@ -180,6 +186,11 @@ public class AnvilPacketMenu implements PacketMenu
 	@Override
 	public void cancelUpdateTask() {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setClickSound(Sound sound) {
+		clickSound = sound;
 	}
 	
 }

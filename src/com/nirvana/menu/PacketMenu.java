@@ -1,5 +1,6 @@
 package com.nirvana.menu;
 
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -110,5 +111,11 @@ public interface PacketMenu
 	public void createUpdateTask(Runnable runnable, long delay, long period);
 	
 	public void cancelUpdateTask();
+	
+	/**
+	 * Set a sound to play whenever this menu is clicked
+	 * @param sound
+	 */
+	public void setClickSound(Sound sound);
 	
 }
