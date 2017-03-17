@@ -8,6 +8,7 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
@@ -167,6 +168,8 @@ public class Item implements Cloneable
 
 		org.bukkit.inventory.ItemStack stack = new org.bukkit.inventory.ItemStack(this.type, this.amount, (short)this.data);
 		ItemMeta im = stack.getItemMeta();
+		
+		im.addItemFlags(ItemFlag.values());
 
 		if ((this.title != null) && 
 				(this.title != "")) {
