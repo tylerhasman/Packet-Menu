@@ -1,6 +1,7 @@
 package com.nirvana.menu;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,6 +16,8 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+
+import net.md_5.bungee.api.ChatColor;
 
 public class PacketMenuListener extends PacketAdapter implements Listener 
 {
@@ -61,9 +64,9 @@ public class PacketMenuListener extends PacketAdapter implements Listener
 			int slot = packet.getIntegers().read(1);
 			int button = packet.getIntegers().read(2);
 			
-			int actionNumber = packet.getShorts().read(0);
-			
 			ItemStack clickedItem = packet.getItemModifier().read(0);
+			
+			ClickMode mode = packet.getEnumModifier(ClickMode.class, 5).read(0);
 			
 			if(slot < 0)
 				return;
@@ -72,17 +75,34 @@ public class PacketMenuListener extends PacketAdapter implements Listener
 			
 			if(menu != null){
 				
+				event.setReadOnly(false);
+				event.setCancelled(true);
+				
 				if(menu.getWindowId() != windowId){
 					return;
 				}
 				
-				if(slot >= menu.getSize()){
+				ClickType clickType = getClickType(mode, button);
+				
+				if(clickType == null){//Special return for the drag
+					Bukkit.getScheduler().runTask(PacketMenuPlugin.getInstance(), () -> player.updateInventory());
+					PacketMenuUtilities.sendWindowItemPacketGuaranteedSync(windowId, menu.getItems(), player);
 					return;
 				}
 				
-				PacketMenuUtilities.sendSetSlotGuaranteedSync(-1, -1, null, player);
+				if(slot >= menu.getSize() && clickType == ClickType.LEFT){
+					menu.setHeldItem(player, clickedItem);
+					return;
+				}else if(slot >= menu.getSize()){
+					PacketMenuUtilities.sendSetSlotGuaranteedSync(slot, windowId, clickedItem, player);
+					return;
+				}
 				
-				ClickType clickType = getClickType(actionNumber, button);
+				if(clickType == ClickType.UNKNOWN){
+					player.sendMessage(ChatColor.RED+"Unknown click type! Mode: "+mode+" button: "+button);
+				}
+				
+				PacketMenuUtilities.sendSetSlotGuaranteedSync(-1, -1, null, player);
 				
 				PacketMenuUtilities.sendSetSlotGuaranteedSync(slot, windowId, menu.getItem(slot), player);
 				
@@ -94,40 +114,40 @@ public class PacketMenuListener extends PacketAdapter implements Listener
 				if(clickedItem != null){
 					menu.onClick(slot, clickType, player, clickedItem);
 				}
-				
-				event.setReadOnly(false);
-				event.setCancelled(true);
+
+				menu.setHeldItem(player, new ItemStack(Material.AIR));
 			}
 		}
 	}
 	
-	public ClickType getClickType(int mode, int button){
-		if(mode == 0){
+	public ClickType getClickType(ClickMode mode, int button){
+		if(mode == ClickMode.PICKUP){
 			if(button == 0)
 			{
 				return ClickType.LEFT;
 			}else{
 				return ClickType.RIGHT;
 			}
-		}else if(mode == 1){
+		}else if(mode == ClickMode.QUICK_MOVE){
 			if(button == 0){
 				return ClickType.SHIFT_LEFT;
 			}else{
 				return ClickType.SHIFT_RIGHT;
 			}
-		}else if(mode == 2){
+		}else if(mode == ClickMode.SWAP){
 			return ClickType.NUMBER_KEY;
-		}else if(mode == 3 && button == 2){
+		}else if(mode == ClickMode.CLONE && button == 2){
 			return ClickType.MIDDLE;
-		}else if(mode == 4){
-			if(button == 0)
-			{
+		}else if(mode == ClickMode.THROW){
+			if(button == 0){
 				return ClickType.DROP;
 			}else if(button == 1){
 				return ClickType.CONTROL_DROP;
 			}
-		}else if(mode == 6){
+		}else if(mode == ClickMode.PICKUP_ALL){
 			return ClickType.DOUBLE_CLICK;
+		}else if(mode == ClickMode.QUICK_CRAFT){
+			return null;
 		}
 		
 		return ClickType.UNKNOWN;

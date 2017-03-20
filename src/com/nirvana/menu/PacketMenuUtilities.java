@@ -75,10 +75,10 @@ class PacketMenuUtilities
 		});
 	}
 	
-	public static void notifyPacketHandlerSynchronously(PacketMenuSlotHandler handler, Player player, ItemStack item, PacketMenu menu, ClickType clickType, int slot){
+	public static void notifyPacketHandlerSynchronously(PacketMenuSlotHandler handler, Player player, ItemStack item, PacketMenu menu, ClickType clickType, int slot, ItemStack heldItem){
 		Bukkit.getScheduler().runTask(PacketMenuPlugin.getInstance(), () -> {
 			
-			Interaction in = new Interaction(item, clickType, slot);
+			Interaction in = new Interaction(item, clickType, slot, heldItem);
 			
 			handler.onClicked(player, menu, in);
 		});

@@ -3,7 +3,9 @@ package com.nirvana.menu;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
@@ -44,6 +46,8 @@ public class ChestPacketMenu implements PacketMenu
 	
 	private List<UUID> viewers;
 	
+	private Map<UUID, ItemStack> heldItems;
+	
 	private Sound clickSound;
 	
 	/**
@@ -71,6 +75,7 @@ public class ChestPacketMenu implements PacketMenu
 		lastClick = 0;
 		minimumClickDelay = 0;
 		viewers = new ArrayList<>();
+		heldItems = new HashMap<>();
 	}
 	
 	@Override
@@ -244,12 +249,14 @@ public class ChestPacketMenu implements PacketMenu
 		PacketMenuSlotHandler handler = handlers[slot];
 		
 		if(handler != null){
-			PacketMenuUtilities.notifyPacketHandlerSynchronously(handler, player, items[slot], this, clickType, slot);
+			PacketMenuUtilities.notifyPacketHandlerSynchronously(handler, player, items[slot], this, clickType, slot, heldItems.get(player.getUniqueId()));
 		}
 		
 		if(generalHandler != null){
-			PacketMenuUtilities.notifyPacketHandlerSynchronously(generalHandler, player, items[slot], this, clickType, slot);
+			PacketMenuUtilities.notifyPacketHandlerSynchronously(generalHandler, player, items[slot], this, clickType, slot, heldItems.get(player.getUniqueId()));
 		}
+		
+		PacketMenuUtilities.sendSetSlotGuaranteedSync(-1, -1, heldItems.get(player.getUniqueId()), player);
 		
 		PacketMenuUtilities.sendSetSlotGuaranteedSync(slot, id, items[slot], player);
 		
@@ -257,7 +264,6 @@ public class ChestPacketMenu implements PacketMenu
 			if(clicked != null)
 				player.playSound(player.getLocation(), clickSound, 1F, 1F);
 		}
-			
 		
 	}
 	
@@ -311,6 +317,17 @@ public class ChestPacketMenu implements PacketMenu
 		if(updateTask != null){
 			updateTask.cancel();
 		}
+	}
+
+	@Override
+	public void setHeldItem(Player player, ItemStack clickedItem) {
+		heldItems.put(player.getUniqueId(), clickedItem);
+		PacketMenuUtilities.sendSetSlotGuaranteedSync(-1, -1, clickedItem, player);
+	}
+	
+	@Override
+	public ItemStack[] getItems() {
+		return Arrays.copyOf(items, items.length);
 	}
 	
 }

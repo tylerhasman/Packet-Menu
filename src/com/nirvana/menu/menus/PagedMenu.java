@@ -76,26 +76,23 @@ public class PagedMenu extends ChestPacketMenu {
 		}
 		
 		if(page > 0){
-			addItem(1, 6, new Item(Material.ARROW).setTitle(ChatColor.GRAY+"Last Page").build(), new PacketMenuSlotHandler() {
+			addItem(1, 6, new Item(Material.ARROW).setTitle(ChatColor.GRAY+"\u2190 Last Page").build(), new PacketMenuSlotHandler() {
 				
 				@Override
 				public void onClicked(Player player, PacketMenu menu, Interaction interactionInfo) {
 					page--;
 					remake(true);
-					//new PagedMenu(PagedMenu.this.entries, page - 1, PagedMenu.this.menuTitle).open(player);
 				}
 			});
 		}
 		
 		if(entries.size() > 0){
-			addItem(9, 6, new Item(Material.ARROW).setTitle(ChatColor.GRAY+"Next Page").build(), new PacketMenuSlotHandler() {
+			addItem(9, 6, new Item(Material.ARROW).setTitle(ChatColor.GRAY+"Next Page \u2192").build(), new PacketMenuSlotHandler() {
 				
 				@Override
 				public void onClicked(Player player, PacketMenu menu, Interaction interactionInfo) {
 					page++;
 					remake(true);
-					//menu.close();
-					//new PagedMenu(PagedMenu.this.entries, page + 1, PagedMenu.this.menuTitle).open(player);;
 				}
 			});
 		}

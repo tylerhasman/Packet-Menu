@@ -156,7 +156,7 @@ public class AnvilPacketMenu implements PacketMenu
 	}
 	
 	public void sendItemsPacket(Player pl){
-		ItemStack[] items = new ItemStack[] { new Item(result).setTitle(defaultText).build(), null, new Item(result).setTitle(defaultText).build() };
+		ItemStack[] items = getItems();
 		
 		PacketMenuUtilities.sendWindowItemPacketGuaranteedSync(id, items, pl);
 	}
@@ -191,6 +191,16 @@ public class AnvilPacketMenu implements PacketMenu
 	@Override
 	public void setClickSound(Sound sound) {
 		clickSound = sound;
+	}
+
+	@Override
+	public void setHeldItem(Player player, ItemStack clickedItem) {
+		
+	}
+
+	@Override
+	public ItemStack[] getItems() {
+		return new ItemStack[] { new Item(result).setTitle(defaultText).build(), null, new Item(result).setTitle(defaultText).build() };
 	}
 	
 }

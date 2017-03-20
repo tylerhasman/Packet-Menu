@@ -117,5 +117,9 @@ public interface PacketMenu
 	 * @param sound
 	 */
 	public void setClickSound(Sound sound);
+
+	public void setHeldItem(Player player, ItemStack clickedItem);
+
+	public ItemStack[] getItems();
 	
 }
