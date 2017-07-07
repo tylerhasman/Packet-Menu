@@ -192,8 +192,6 @@ public class ChestPacketMenu implements PacketMenu
 	public void open(Player pl)
 	{
 		
-		pl.updateInventory();
-		
 		WrappedChatComponent titleComponent = WrappedChatComponent.fromText(title);
 		
 		PacketMenuUtilities.sendWindowOpenPacketGuaranteedSync(id, size, PacketMenuUtilities.CHEST_TYPE, titleComponent, pl);

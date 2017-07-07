@@ -68,8 +68,6 @@ public class AnvilPacketMenu implements PacketMenu
 	public void open(Player pl)
 	{
 		
-		pl.updateInventory();
-		
 		PacketContainer packet = PacketUtil.openWindowPacket(id, PacketMenuUtilities.ANVIL_TYPE, ChatColor.DARK_GREEN+defaultText, 0);
 		
 		try {
