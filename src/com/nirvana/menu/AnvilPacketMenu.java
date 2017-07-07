@@ -11,12 +11,8 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
-
 import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.PacketType.Play;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 public class AnvilPacketMenu implements PacketMenu
 {
@@ -71,6 +67,8 @@ public class AnvilPacketMenu implements PacketMenu
 	@Override
 	public void open(Player pl)
 	{
+		
+		pl.updateInventory();
 		
 		PacketContainer packet = PacketUtil.openWindowPacket(id, PacketMenuUtilities.ANVIL_TYPE, ChatColor.DARK_GREEN+defaultText, 0);
 		
