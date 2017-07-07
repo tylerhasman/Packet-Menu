@@ -116,6 +116,7 @@ public class PacketMenuListener extends PacketAdapter implements Listener
 				}
 
 				menu.setHeldItem(player, new ItemStack(Material.AIR));
+				
 			}
 		}
 	}
