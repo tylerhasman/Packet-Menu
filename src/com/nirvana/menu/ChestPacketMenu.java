@@ -128,7 +128,6 @@ public class ChestPacketMenu implements PacketMenu
 		return -1;
 	}
 	
-	@Override
 	public void addItem(ItemStack item, PacketMenuSlotHandler handler)
 	{
 		if(nextOpenSlot() == -1){
@@ -140,19 +139,16 @@ public class ChestPacketMenu implements PacketMenu
 		addItem(nextOpenSlot(), item, handler);
 	}
 	
-	@Override
 	public void addItem(int x, int y, ItemStack item)
 	{
 		addItem(translateCoord(x, y), item);
 	}
 	
-	@Override
 	public void addItem(int x, int y, ItemStack item, PacketMenuSlotHandler handler)
 	{
 		addItem(translateCoord(x, y), item, handler);
 	}
 	
-	@Override
 	public void addItem(int slot, ItemStack item)
 	{
 		
@@ -180,7 +176,6 @@ public class ChestPacketMenu implements PacketMenu
 		}
 	}
 	
-	@Override
 	public void addItem(int slot, ItemStack item, PacketMenuSlotHandler handler)
 	{
 		addItem(slot, item);

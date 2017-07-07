@@ -63,36 +63,6 @@ public class AnvilPacketMenu implements PacketMenu
 	}
 	
 	@Override
-	public void addItem(ItemStack item, PacketMenuSlotHandler handler)
-	{
-		throw new UnsupportedOperationException();
-	}
-	
-	@Override
-	public void addItem(int x, int y, ItemStack item)
-	{
-		throw new UnsupportedOperationException();
-	}
-	
-	@Override
-	public void addItem(int x, int y, ItemStack item, PacketMenuSlotHandler handler)
-	{
-		throw new UnsupportedOperationException();
-	}
-	
-	@Override
-	public void addItem(int slot, ItemStack item)
-	{
-		throw new UnsupportedOperationException();
-	}
-	
-	@Override
-	public void addItem(int slot, ItemStack item, PacketMenuSlotHandler handler)
-	{
-		throw new UnsupportedOperationException();
-	}
-	
-	@Override
 	public void addGeneralHandler(PacketMenuSlotHandler handler)
 	{
 		throw new UnsupportedOperationException();
