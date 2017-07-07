@@ -107,6 +107,11 @@ public class PacketMenuListener extends PacketAdapter implements Listener
 				}
 				
 				if(PacketMenuPlugin.getPacketMenuManager().getOpenMenu(player) == menu){//Did the menu change?
+					//If not do this
+					PacketMenuUtilities.sendSetSlotGuaranteedSync(-1, -1, null, player);
+					
+					PacketMenuUtilities.sendSetSlotGuaranteedSync(slot, windowId, menu.getItem(slot), player);
+					
 
 					menu.setHeldItem(player, new ItemStack(Material.AIR));
 				}
