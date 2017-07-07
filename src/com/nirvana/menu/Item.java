@@ -153,15 +153,6 @@ public class Item implements Cloneable
 		this.color = c;return this;
 	}
 
-/*	public Item setOwner(String s)
-	{
-		if (!this.type.equals(Material.SKULL_ITEM)) {
-			throw new RuntimeException("Cannot set the owner of any item besides SKULL_ITEM");
-		}
-		this.owner = Util.getUUID(s);
-		return this;
-	}*/
-
 	public org.bukkit.inventory.ItemStack build()
 	{
 		Validate.noNullElements(new Object[] { this.type, Integer.valueOf(this.data), Integer.valueOf(this.amount) });
@@ -193,17 +184,6 @@ public class Item implements Cloneable
 			stack = FakeGlow.apply(stack);
 		}
 		*/
-/*		if ((this.owner != null) && (this.type.equals(Material.SKULL_ITEM))) {
-			net.minecraft.server.v1_8_R3.ItemStack nms = CraftItemStack.asNMSCopy(stack);
-			if(nms.getTag() == null)
-				nms.setTag(new NBTTagCompound());
-			PropertyMap map = SkinLib.getProperties(owner, CapeType.NONE);
-			GameProfile profile = new GameProfile(owner, owner.toString().split("\\-")[0]);
-			if(map != null)
-				profile.getProperties().putAll(map);
-			nms.getTag().set("SkullOwner", GameProfileSerializer.serialize(new NBTTagCompound(), profile));
-			stack = CraftItemStack.asBukkitCopy(nms);
-		}*/
 		
 		if(unbreakable){
 			ItemMeta meta = stack.getItemMeta();
