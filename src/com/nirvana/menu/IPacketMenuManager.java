@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class IPacketMenuManager implements PacketMenuManager
@@ -36,6 +37,8 @@ public class IPacketMenuManager implements PacketMenuManager
 	@Override
 	public void setPacketMenu(Player player, PacketMenu menu)
 	{
+		unsetPacketMenu(player);
+		
 		openMenus.put(player.getUniqueId(), menu);
 	}
 	

@@ -40,7 +40,7 @@ public class AnvilPacketMenu implements PacketMenu
 	
 	public AnvilPacketMenu()
 	{
-		id = 127;
+		id = 126;
 		viewers = new ArrayList<>();
 	}
 	

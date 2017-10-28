@@ -11,6 +11,9 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 
 public class Item implements Cloneable
@@ -24,6 +27,8 @@ public class Item implements Cloneable
 	private Color color;
 	private HashMap<Enchantment, Integer> enchantments;
 	private boolean unbreakable;
+	
+	private List<PotionEffect> effects;
 
 	public Item(Material type)
 	{
@@ -73,6 +78,18 @@ public class Item implements Cloneable
 	public Item(Item item)
 	{
 		this(item.build());
+	}
+	
+	public Item addEffect(PotionEffectType type, int level, int duration){
+		PotionEffect effect = type.createEffect(duration, level);
+		
+		if (effect == null) {
+			effects = new ArrayList<>();
+		}
+		
+		effects.add(effect);
+
+		return this;
 	}
 	
 	public Item setUnbreakable(boolean flag){
@@ -162,6 +179,7 @@ public class Item implements Cloneable
 		return this;
 	}*/
 
+	@SuppressWarnings("deprecation")
 	public org.bukkit.inventory.ItemStack build()
 	{
 		Validate.noNullElements(new Object[] { this.type, Integer.valueOf(this.data), Integer.valueOf(this.amount) });
@@ -187,6 +205,18 @@ public class Item implements Cloneable
 		if ((this.enchantments != null) && 
 				(!this.enchantments.isEmpty())) {
 			stack.addUnsafeEnchantments(this.enchantments);
+		}
+		
+		if(effects != null){
+			
+			PotionMeta meta = (PotionMeta) im;
+			
+			for(PotionEffect effect : effects){
+				meta.addCustomEffect(effect, true);
+			}
+			
+			meta.setMainEffect(effects.get(0).getType());
+			
 		}
 		
 		/*if(glow) {

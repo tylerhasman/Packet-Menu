@@ -219,6 +219,7 @@ public class ChestPacketMenu implements PacketMenu
 	@Override
 	public void close(){
 		if(!closed){
+			cancelUpdateTask();
 			for(UUID viewer : viewers){
 				Player pl = Bukkit.getPlayer(viewer);
 				PacketContainer packet = PacketUtil.closeWindow(this.getWindowId());
@@ -230,7 +231,6 @@ public class ChestPacketMenu implements PacketMenu
 				}
 				
 				PacketMenuPlugin.getPacketMenuManager().unsetPacketMenu(pl);
-				cancelUpdateTask();
 				closed = true;
 			}
 		}

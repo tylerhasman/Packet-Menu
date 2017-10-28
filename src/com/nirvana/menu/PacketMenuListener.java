@@ -39,6 +39,10 @@ public class PacketMenuListener extends PacketAdapter implements Listener
 	public void onPlayerOpenMenu(InventoryOpenEvent event){
 		Player player = Bukkit.getPlayer(event.getPlayer().getUniqueId());
 		
+		if(player == null){
+			return;
+		}
+		
 		PacketMenuPlugin.getPacketMenuManager().unsetPacketMenu(player);
 	}
 	
