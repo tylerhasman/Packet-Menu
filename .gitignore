@@ -12,3 +12,5 @@
 hs_err_pid*
 *.prefs
 /target/
+
+target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst

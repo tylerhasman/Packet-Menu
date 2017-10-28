@@ -15,45 +15,6 @@ public interface PacketMenu
 	public int getSize();
 	
 	/**
-	 * Add an item to this packet menu
-	 * @param x the x coordinate
-	 * @param y the y coordinate
-	 * @param item the item
-	 */
-	public void addItem(int x, int y, ItemStack item);
-	
-	/**
-	 * Adds an item to the next open slot in the packet menu
-	 * @param item the item
-	 * @param handler the handler
-	 */
-	public void addItem(ItemStack item, PacketMenuSlotHandler handler);
-	
-	/**
-	 * Add an item to this packet menu and set its handler
-	 * @param x the x coordinate
-	 * @param y the y coordinate
-	 * @param item the item
-	 * @param handler the handler
-	 */
-	public void addItem(int x, int y, ItemStack item, PacketMenuSlotHandler handler);
-	
-	/**
-	 * Add an item to this packet menu
-	 * @param slot the slot id
-	 * @param item the item
-	 */
-	public void addItem(int slot, ItemStack item);
-	
-	/**
-	 * Add an item to this packet menu and set its handler
-	 * @param slot the slot id
-	 * @param item the item
-	 * @param handler the handler
-	 */
-	public void addItem(int slot, ItemStack item, PacketMenuSlotHandler handler);
-	
-	/**
 	 * Add a general handler that will activate whenever the inventory is clicked
 	 * regardless of slot
 	 * @param handler the handler
@@ -81,7 +42,7 @@ public interface PacketMenu
 	public void close();
 	
 	/**
-	 * Called internally, don't call
+	 * Trigger a click event for this menu
 	 * @param slot the slot
 	 * @param type the click type
 	 * @param player the player
@@ -118,7 +79,7 @@ public interface PacketMenu
 	 */
 	public void setClickSound(Sound sound);
 
-	public void setHeldItem(Player player, ItemStack clickedItem);
+	public void setHeldItem(Player player, ItemStack item);
 
 	public ItemStack[] getItems();
 	

@@ -10,7 +10,6 @@ import java.util.UUID;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -20,6 +19,8 @@ import org.bukkit.scheduler.BukkitTask;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+
+import net.md_5.bungee.api.ChatColor;
 
 public class ChestPacketMenu implements PacketMenu
 {
@@ -128,7 +129,6 @@ public class ChestPacketMenu implements PacketMenu
 		return -1;
 	}
 	
-	@Override
 	public void addItem(ItemStack item, PacketMenuSlotHandler handler)
 	{
 		if(nextOpenSlot() == -1){
@@ -140,19 +140,16 @@ public class ChestPacketMenu implements PacketMenu
 		addItem(nextOpenSlot(), item, handler);
 	}
 	
-	@Override
 	public void addItem(int x, int y, ItemStack item)
 	{
 		addItem(translateCoord(x, y), item);
 	}
 	
-	@Override
 	public void addItem(int x, int y, ItemStack item, PacketMenuSlotHandler handler)
 	{
 		addItem(translateCoord(x, y), item, handler);
 	}
 	
-	@Override
 	public void addItem(int slot, ItemStack item)
 	{
 		
@@ -180,7 +177,6 @@ public class ChestPacketMenu implements PacketMenu
 		}
 	}
 	
-	@Override
 	public void addItem(int slot, ItemStack item, PacketMenuSlotHandler handler)
 	{
 		addItem(slot, item);
@@ -256,13 +252,11 @@ public class ChestPacketMenu implements PacketMenu
 			PacketMenuUtilities.notifyPacketHandlerSynchronously(generalHandler, player, items[slot], this, clickType, slot, heldItems.get(player.getUniqueId()));
 		}
 		
-		PacketMenuUtilities.sendSetSlotGuaranteedSync(-1, -1, heldItems.get(player.getUniqueId()), player);
-		
-		PacketMenuUtilities.sendSetSlotGuaranteedSync(slot, id, items[slot], player);
-		
 		if(clickSound != null){
-			if(clicked != null)
-				player.playSound(player.getLocation(), clickSound, 1F, 1F);
+			if(clicked != null){
+				PacketMenuUtilities.playSoundSynchronously(player, clickSound);
+			}
+				
 		}
 		
 	}

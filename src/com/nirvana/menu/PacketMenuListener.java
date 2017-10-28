@@ -105,21 +105,27 @@ public class PacketMenuListener extends PacketAdapter implements Listener
 				if(clickType == ClickType.UNKNOWN){
 					player.sendMessage(ChatColor.RED+"Unknown click type! Mode: "+mode+" button: "+button);
 				}
+
+				if(clickedItem != null){
+					menu.onClick(slot, clickType, player, clickedItem);
+				}
 				
-				PacketMenuUtilities.sendSetSlotGuaranteedSync(-1, -1, null, player);
-				
-				PacketMenuUtilities.sendSetSlotGuaranteedSync(slot, windowId, menu.getItem(slot), player);
+				if(PacketMenuPlugin.getPacketMenuManager().getOpenMenu(player) == menu){//Did the menu change?
+					//If not do this
+					PacketMenuUtilities.sendSetSlotGuaranteedSync(-1, -1, null, player);
+					
+					PacketMenuUtilities.sendSetSlotGuaranteedSync(slot, windowId, menu.getItem(slot), player);
+					
+
+					menu.setHeldItem(player, new ItemStack(Material.AIR));
+				}
 				
 				if(clickType == ClickType.NUMBER_KEY || clickType == ClickType.SHIFT_LEFT || clickType == ClickType.SHIFT_RIGHT)
 				{
 					Bukkit.getScheduler().runTask(PacketMenuPlugin.getInstance(), () -> player.updateInventory());
 				}
 				
-				if(clickedItem != null){
-					menu.onClick(slot, clickType, player, clickedItem);
-				}
-
-				menu.setHeldItem(player, new ItemStack(Material.AIR));
+				
 			}
 		}
 	}

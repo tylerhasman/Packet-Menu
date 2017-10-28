@@ -1,6 +1,5 @@
 package com.nirvana.menu.menus;
 
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.nirvana.menu.PacketMenuSlotHandler;
